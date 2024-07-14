@@ -57,9 +57,10 @@ extension MainViewController: Coordinator {
             switch result {
             case .success:
                 self.loadViewController()
-                self.loadPresets()
-                self.presetsViewController.supportsUserPresets = self.audioUnitManager.supportsUserPresets
+                // self.loadPresets()
+                // self.presetsViewController.supportsUserPresets = self.audioUnitManager.supportsUserPresets
                 self.hideToggleViewButton = !self.audioUnitManager.providesAlterativeViews
+                
             case .failure(let error):
                 print("Unable to select audio unit: \(error)")
             }
@@ -78,7 +79,7 @@ class MainViewController: NSSplitViewController {
 
     unowned var listViewController: ListViewController!
     unowned var componentViewController: ComponentViewController!
-    unowned var presetsViewController: PresetsViewController!
+    // unowned var presetsViewController: PresetsViewController!
 
     override var splitViewItems: [NSSplitViewItem] {
         didSet {
@@ -89,9 +90,11 @@ class MainViewController: NSSplitViewController {
                     listViewController.coordinator = self
                 case let viewController as ComponentViewController:
                     componentViewController = viewController
+                    /*
                 case let viewController as PresetsViewController:
                     presetsViewController = viewController
                     presetsViewController.coordinator = self
+                     */
                 default:
                     fatalError("Unsupported view controller type found")
                 }
@@ -103,8 +106,10 @@ class MainViewController: NSSplitViewController {
         switch sender.selectedSegment {
         case 0:
             toggleAudioUnits()
+            /*
         case 1:
             togglePresets()
+             */
         default:
             print("Unknown segment selected: \(sender.selectedSegment)")
         }
@@ -124,10 +129,12 @@ class MainViewController: NSSplitViewController {
         toggle(item: item)
     }
     
+    /*
     func togglePresets() {
         guard let item = splitViewItem(for: presetsViewController) else { return }
         toggle(item: item)
     }
+     */
     
     func toggle(item: NSSplitViewItem) {
         item.animator().isCollapsed = !item.isCollapsed
@@ -174,10 +181,12 @@ class MainViewController: NSSplitViewController {
         }
     }
 
+    /*
     func loadPresets() {
         presetsViewController.factoryPresets = audioUnitManager.factoryPresets
         presetsViewController.userPresets = audioUnitManager.userPresets
     }
+     */
 
     func loadViewController() {
         audioUnitManager.loadAudioUnitViewController() { viewController in
