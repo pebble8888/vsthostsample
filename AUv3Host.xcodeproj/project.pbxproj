@@ -81,8 +81,7 @@
 			children = (
 				BD8F02B546CC57656EAEF3A7 /* README.md */,
 				39432AFE2437AD3F0042187A /* AUv3Host.entitlements */,
-				C49B30F0222459AF0003E2C4 /* macOS */,
-				C40DA93B21FB6DA100F0FE9A /* Shared */,
+				C49B30F1222459AF0003E2C4 /* AUv3Host */,
 				C40DA91521FB6CC600F0FE9A /* Products */,
 				39432AFF2437AD3F0042187A /* Frameworks */,
 				8B2EB085B5724F91F70A2E18 /* Configuration */,
@@ -98,33 +97,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C40DA93B21FB6DA100F0FE9A /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				C4D59DE522272440006E2B68 /* AudioUnitManager.swift */,
-				C48413C92232E52D00725ED5 /* Support */,
-			);
-			path = Shared;
-			sourceTree = "<group>";
-		};
-		C48413C92232E52D00725ED5 /* Support */ = {
-			isa = PBXGroup;
-			children = (
-				C4E6ADC222564C6F00AAAA23 /* Synth.aif */,
-				C40DA93F21FB6DA100F0FE9A /* SimplePlayEngine.swift */,
-				C4D3253C22299CFD0074FFD2 /* ViewExtensions.swift */,
-			);
-			path = Support;
-			sourceTree = "<group>";
-		};
-		C49B30F0222459AF0003E2C4 /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-				C49B30F1222459AF0003E2C4 /* AUv3Host */,
-			);
-			path = macOS;
-			sourceTree = "<group>";
-		};
 		C49B30F1222459AF0003E2C4 /* AUv3Host */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +105,10 @@
 				C43B7167224D6A1100FA309D /* ListViewController.swift */,
 				C404AF0A224E92E900DA7170 /* ComponentViewController.swift */,
 				C4073D3C22723FAE0049E662 /* AlertExtensions.swift */,
+				C4D59DE522272440006E2B68 /* AudioUnitManager.swift */,
+				C4E6ADC222564C6F00AAAA23 /* Synth.aif */,
+				C40DA93F21FB6DA100F0FE9A /* SimplePlayEngine.swift */,
+				C4D3253C22299CFD0074FFD2 /* ViewExtensions.swift */,
 				C49B30F4222459AF0003E2C4 /* Main.storyboard */,
 				C49B30F3222459AF0003E2C4 /* Assets.xcassets */,
 				C49B30F7222459AF0003E2C4 /* Info.plist */,
@@ -367,7 +343,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = macOS/AUv3Host/Info.plist;
+				INFOPLIST_FILE = AUv3Host/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -437,7 +413,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = macOS/AUv3Host/Info.plist;
+				INFOPLIST_FILE = AUv3Host/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

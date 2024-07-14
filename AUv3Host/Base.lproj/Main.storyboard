@@ -187,10 +187,9 @@
                     <window key="window" title="AUv3Host" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" titleVisibility="hidden" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
-                        <rect key="contentRect" x="197" y="414" width="1150" height="600"/>
+                        <rect key="contentRect" x="123" y="736" width="400" height="200"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
-                        <value key="minSize" type="size" width="1150" height="600"/>
-                        <value key="maxSize" type="size" width="1150" height="600"/>
+                        <value key="minSize" type="size" width="100" height="100"/>
                         <toolbar key="toolbar" implicitIdentifier="CF38549C-C1EF-4C60-B1CC-251D40A799B3" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="b8k-uq-u4w">
                             <allowedToolbarItems>
                                 <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="0HY-pa-m1Z"/>
@@ -214,8 +213,8 @@ IA
                                 <toolbarItem implicitItemIdentifier="F8B225BA-8B38-43C8-A7C1-533C778564DF" label="Custom View" paletteLabel="Custom View" title="Load VST3" sizingBehavior="auto" id="GZA-hn-z8A">
                                     <nil key="toolTip"/>
                                     <button key="view" verticalHuggingPriority="750" id="qBm-gI-J2c">
-                                        <rect key="frame" x="0.0" y="14" width="115" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="0.0" y="14" width="101" height="32"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="push" title="Load VST3" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="FYK-Sc-PGE">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -228,8 +227,8 @@ IA
                                 <toolbarItem implicitItemIdentifier="6D2DB575-BC02-46B1-A523-85862FD7C3C2" label="Custom View" paletteLabel="Custom View" title="Unload VST3" sizingBehavior="auto" id="OVk-di-Vah">
                                     <nil key="toolTip"/>
                                     <button key="view" verticalHuggingPriority="750" id="T7a-E8-rii">
-                                        <rect key="frame" x="0.0" y="14" width="128" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <rect key="frame" x="0.0" y="14" width="114" height="32"/>
+                                        <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="push" title="Unload VST3" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKe-P7-Xm3">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -267,7 +266,7 @@ IA
                         <splitViewItem id="SEJ-Df-R82"/>
                     </splitViewItems>
                     <splitView key="splitView" wantsLayer="YES" dividerStyle="thin" vertical="YES" id="N0e-v3-ktn" customClass="SplitView" customModule="AUv3Host" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="300"/>
+                        <rect key="frame" x="0.0" y="0.0" width="300" height="200"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <connections>
                             <outlet property="delegate" destination="FC8-QX-ZfC" id="eC7-Md-zcA"/>
@@ -288,11 +287,11 @@ IA
             <objects>
                 <viewController id="sN6-U3-POm" customClass="ListViewController" customModule="AUv3Host" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" misplaced="YES" id="agc-Eu-GFZ">
-                        <rect key="frame" x="0.0" y="0.0" width="250" height="700"/>
+                        <rect key="frame" x="0.0" y="0.0" width="250" height="489"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="fbQ-Dc-3Dp" customClass="BarView" customModule="AUv3Host" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="477" width="250" height="32"/>
+                                <rect key="frame" x="0.0" y="457" width="250" height="32"/>
                                 <subviews>
                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="apx-yz-kCg" userLabel="AU Type Segmented Control">
                                         <rect key="frame" x="25" y="4" width="201" height="24"/>
@@ -315,16 +314,16 @@ IA
                                 </constraints>
                             </customView>
                             <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="windowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="dYD-0u-eKO">
-                                <rect key="frame" x="0.0" y="0.0" width="250" height="477"/>
+                                <rect key="frame" x="0.0" y="0.0" width="250" height="457"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="21" horizontalPageScroll="10" verticalLineScroll="21" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rCf-rm-FqE">
-                                        <rect key="frame" x="0.0" y="0.0" width="250" height="477"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="250" height="457"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="sum-Qe-Obn">
-                                            <rect key="frame" x="0.0" y="0.0" width="250" height="477"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="250" height="457"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="7fQ-MO-DR4">
-                                                    <rect key="frame" x="0.0" y="0.0" width="250" height="473"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="250" height="453"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="10" height="4"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
