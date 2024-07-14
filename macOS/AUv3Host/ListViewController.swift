@@ -8,7 +8,6 @@ The view controller managing the list of audio units.
 import Cocoa
 
 class ListViewController: NSViewController {
-
     // Automatically set by HostViewController
     weak var coordinator: Coordinator!
     
@@ -49,7 +48,6 @@ class ListViewController: NSViewController {
 }
 
 extension ListViewController: NSTableViewDataSource, NSTableViewDelegate {
-
     func numberOfRows(in tableView: NSTableView) -> Int {
         return audioUnitComponents.count
     }

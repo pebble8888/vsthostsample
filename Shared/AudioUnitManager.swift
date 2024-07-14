@@ -113,31 +113,8 @@ class AudioUnitManager {
         didSet {
             // A new audio unit was selected. Reset our internal state.
             observer = nil
-            // userPresetChangeType = .undefined
-
             // If the selected audio unit doesn't support user presets, return.
             guard audioUnit?.supportsUserPresets ?? false else { return }
-            
-            /*
-            // Start observing the selected audio unit's "userPresets" property.
-            observer = audioUnit?.observe(\.userPresets) { _, _ in
-                DispatchQueue.main.async {
-                    var changeType = self.userPresetChangeType
-                    // If the change wasn't triggered by a user save or delete, it changed
-                    // due to an external add or remove from the presets folder.
-                    if ![.save, .delete].contains(changeType) {
-                        changeType = .external
-                    }
-                    
-                    // Post a notification to any registered listeners.
-                    let change = UserPresetsChange(type: changeType, userPresets: self.userPresets)
-                    NotificationCenter.default.post(name: .userPresetsChanged, object: change)
-                    
-                    // Reset property to its default value
-                    self.userPresetChangeType = .undefined
-                }
-            }
-             */
         }
     }
 
@@ -215,23 +192,14 @@ class AudioUnitManager {
 
     private var viewConfigurations: [AUAudioUnitViewConfiguration] = {
         let compact = AUAudioUnitViewConfiguration(width: 400, height: 100, hostHasController: false)
-        let expanded = AUAudioUnitViewConfiguration(width: 800, height: 500, hostHasController: false)
-        return [compact, expanded]
+        return [compact]
     }()
-
-    /// Determines if the selected AU provides more than one user interface.
-    var providesAlterativeViews: Bool {
-        guard let audioUnit = audioUnit else { return false }
-        let supportedConfigurations = audioUnit.supportedViewConfigurations(viewConfigurations)
-        return supportedConfigurations.count > 1
-    }
 
     var providesUserInterface: Bool {
         audioUnit?.providesUserInterface ?? false
     }
 
     func loadAudioUnits(ofType type: AudioUnitType, completion: @escaping ([Component]) -> Void) {
-
         // Reset the engine to remove any configured audio units.
         playEngine.reset()
 
@@ -265,7 +233,6 @@ class AudioUnitManager {
     // MARK: Instantiate an Audio Unit
 
     func selectComponent(at index: Int, completion: @escaping (Result<Bool, Error>) -> Void) {
-
         // nil out existing component
         audioUnit = nil
 

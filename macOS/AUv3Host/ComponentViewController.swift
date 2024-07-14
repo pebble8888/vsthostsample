@@ -8,7 +8,6 @@ The view controller managing the presentation of the audio unit user interface.
 import Cocoa
 
 class ComponentViewController: NSViewController {
-
     @IBOutlet weak var containerView: NSView!
     @IBOutlet weak var feedbackLabel: NSTextField!
     

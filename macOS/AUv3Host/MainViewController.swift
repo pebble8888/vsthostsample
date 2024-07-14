@@ -8,7 +8,6 @@ The view controller presenting the main view.
 import Cocoa
 
 protocol Coordinator: AnyObject {
-    // Audio Unit component selection
     func didSelectComponent(at index: Int)
     func didChangeAudioUnitType(to type: AudioUnitType)
 }
@@ -28,7 +27,6 @@ extension MainViewController: Coordinator {
             switch result {
             case .success:
                 self.loadViewController()
-                self.hideToggleViewButton = !self.audioUnitManager.providesAlterativeViews
                 
             case .failure(let error):
                 print("Unable to select audio unit: \(error)")
@@ -38,13 +36,9 @@ extension MainViewController: Coordinator {
 }
 
 class MainViewController: NSSplitViewController {
-
     var selectedIndex = 0
     var audioUnitType = AudioUnitType.effect
-
     let audioUnitManager = AudioUnitManager()
-    
-    var hideToggleViewButton = false
 
     unowned var listViewController: ListViewController!
     unowned var componentViewController: ComponentViewController!
@@ -56,8 +50,10 @@ class MainViewController: NSSplitViewController {
                 case let viewController as ListViewController:
                     listViewController = viewController
                     listViewController.coordinator = self
+                    
                 case let viewController as ComponentViewController:
                     componentViewController = viewController
+                    
                 default:
                     fatalError("Unsupported view controller type found")
                 }
@@ -65,32 +61,22 @@ class MainViewController: NSSplitViewController {
         }
     }
     
-    @IBAction func togglePane(_ sender: NSSegmentedControl) {
-        switch sender.selectedSegment {
-        case 0:
-            toggleAudioUnits()
-        default:
-            print("Unknown segment selected: \(sender.selectedSegment)")
-        }
-    }
-    
     @IBAction func togglePlayback(_ sender: NSButton) {
         audioUnitManager.togglePlayback()
     }
-
-    func toggleAudioUnits() {
-        guard let item = splitViewItem(for: listViewController) else { return }
-        toggle(item: item)
+    
+    @IBAction func loadVST3(_ sender: NSButton) {
+        NSLog("loadVST3")
     }
     
-    func toggle(item: NSSplitViewItem) {
-        item.animator().isCollapsed = !item.isCollapsed
+    @IBAction func unloadVST3(_ sender: NSButton) {
+        NSLog("unloadVST3")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         splitView.translatesAutoresizingMaskIntoConstraints = false
-        loadAudioUnits()
+        loadAudioUnits(ofType: .effect)
     }
 
     override func viewWillAppear() {
@@ -99,11 +85,10 @@ class MainViewController: NSSplitViewController {
     }
     
     override func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
-        guard item is ToggleToolbarItem else { return super.validateUserInterfaceItem(item) }
-        return hideToggleViewButton
+        return super.validateUserInterfaceItem(item)
     }
     
-    func loadAudioUnits(ofType type: AudioUnitType = .effect) {
+    func loadAudioUnits(ofType type: AudioUnitType) {
         audioUnitType = type
 
         // Ensure audio playback is stopped before loading.
@@ -111,7 +96,9 @@ class MainViewController: NSSplitViewController {
 
         // Load audio units.
         audioUnitManager.loadAudioUnits(ofType: type) { [weak self] audioUnits in
-            guard let self = self else { return }
+            guard let self else {
+                return
+            }
             self.listViewController.audioUnitComponents = audioUnits
         }
     }
@@ -121,6 +108,7 @@ class MainViewController: NSSplitViewController {
         case .on:
             sender.state = .off
             audioUnitManager.instantiationType = .outOfProcess
+            
         default:
             sender.state = .on
             audioUnitManager.instantiationType = .inProcess
@@ -152,7 +140,6 @@ class SplitView: NSSplitView {
 }
 
 class BarView: NSView {
-
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         translatesAutoresizingMaskIntoConstraints = false
