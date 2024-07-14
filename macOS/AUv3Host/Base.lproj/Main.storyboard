@@ -198,7 +198,7 @@
                                 <toolbarItem implicitItemIdentifier="D713F0CB-DFCB-4BF9-8847-FE5D7A52D010" label="Pane Selector" paletteLabel="Pane Selector" sizingBehavior="auto" id="d0b-kw-nle">
                                     <nil key="toolTip"/>
                                     <segmentedControl key="view" verticalHuggingPriority="750" id="LYR-vd-TTg">
-                                        <rect key="frame" x="0.0" y="14" width="200" height="27"/>
+                                        <rect key="frame" x="0.0" y="14" width="168" height="24"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectAny" id="9af-J8-V56">
                                             <font key="font" metaFont="system"/>
@@ -215,7 +215,7 @@
                                 <toolbarItem implicitItemIdentifier="88A82F26-DCF1-4450-A198-27206F80A6A9" label="Toggle Button" paletteLabel="Toggle Button" title="Toggle View" sizingBehavior="auto" id="QIl-WA-BEf" customClass="ToggleToolbarItem" customModule="AUv3Host" customModuleProvider="target">
                                     <nil key="toolTip"/>
                                     <button key="view" verticalHuggingPriority="750" id="bvn-A9-xb5">
-                                        <rect key="frame" x="0.0" y="14" width="120" height="32"/>
+                                        <rect key="frame" x="0.0" y="14" width="108" height="32"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="push" title="Toggle View" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QKc-Am-MQ9">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -229,7 +229,7 @@
                                 <toolbarItem implicitItemIdentifier="543E614B-D6EB-4E3A-80D6-7BA749EC0314" label="Play Button" paletteLabel="Play Button" title="Play" sizingBehavior="auto" id="l7p-7k-wdL">
                                     <nil key="toolTip"/>
                                     <button key="view" verticalHuggingPriority="750" id="FkE-4B-Q69">
-                                        <rect key="frame" x="0.0" y="14" width="82" height="32"/>
+                                        <rect key="frame" x="2" y="14" width="63" height="32"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <buttonCell key="cell" type="push" title="Play" alternateTitle="Stop" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c8c-Dm-5JH">
                                             <behavior key="behavior" pushIn="YES" changeContents="YES" lightByContents="YES"/>
@@ -296,7 +296,7 @@ IA
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="fbQ-Dc-3Dp" customClass="BarView" customModule="AUv3Host" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="487" width="250" height="32"/>
+                                <rect key="frame" x="0.0" y="477" width="250" height="32"/>
                                 <subviews>
                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="apx-yz-kCg" userLabel="AU Type Segmented Control">
                                         <rect key="frame" x="25" y="4" width="201" height="24"/>
@@ -319,16 +319,16 @@ IA
                                 </constraints>
                             </customView>
                             <visualEffectView appearanceType="inheritedVibrantLight" blendingMode="behindWindow" material="windowBackground" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="dYD-0u-eKO">
-                                <rect key="frame" x="0.0" y="0.0" width="250" height="487"/>
+                                <rect key="frame" x="0.0" y="0.0" width="250" height="477"/>
                                 <subviews>
                                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="21" horizontalPageScroll="10" verticalLineScroll="21" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rCf-rm-FqE">
-                                        <rect key="frame" x="0.0" y="0.0" width="250" height="487"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="250" height="477"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="sum-Qe-Obn">
-                                            <rect key="frame" x="0.0" y="0.0" width="250" height="487"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="250" height="477"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnSelection="YES" columnResizing="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="7fQ-MO-DR4">
-                                                    <rect key="frame" x="0.0" y="0.0" width="250" height="483"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="250" height="473"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <size key="intercellSpacing" width="10" height="4"/>
                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

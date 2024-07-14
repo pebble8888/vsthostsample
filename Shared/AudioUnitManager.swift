@@ -99,27 +99,26 @@ class AudioUnitManager {
     var filterClosure: (AVAudioUnitComponent) -> Bool = {
         let filterlist = ["AUNewPitch", "AURoundTripAAC", "AUNetSend"]
         var allowed = !filterlist.contains($0.name)
-        #if os(macOS)
         if allowed && $0.typeName == AVAudioUnitTypeEffect {
             allowed = $0.hasCustomView
         }
-        #endif
         return allowed
     }
     
     var observer: NSKeyValueObservation?
-    var userPresetChangeType: UserPresetsChangeType = .undefined
+    // var userPresetChangeType: UserPresetsChangeType = .undefined
 
     /// The user-selected audio unit.
     private var audioUnit: AUAudioUnit? {
         didSet {
             // A new audio unit was selected. Reset our internal state.
             observer = nil
-            userPresetChangeType = .undefined
+            // userPresetChangeType = .undefined
 
             // If the selected audio unit doesn't support user presets, return.
             guard audioUnit?.supportsUserPresets ?? false else { return }
             
+            /*
             // Start observing the selected audio unit's "userPresets" property.
             observer = audioUnit?.observe(\.userPresets) { _, _ in
                 DispatchQueue.main.async {
@@ -138,6 +137,7 @@ class AudioUnitManager {
                     self.userPresetChangeType = .undefined
                 }
             }
+             */
         }
     }
 
@@ -207,29 +207,12 @@ class AudioUnitManager {
         return presets.map { Preset(preset: $0) }.reversed()
     }
     
-    public func savePreset(_ preset: Preset) throws {
-        userPresetChangeType = .save
-        try audioUnit?.saveUserPreset(preset.audioUnitPreset)
-    }
-    
-    public func deletePreset(_ preset: Preset) throws {
-        userPresetChangeType = .delete
-        try audioUnit?.deleteUserPreset(preset.audioUnitPreset)
-    }
-    
-    var supportsUserPresets: Bool {
-        return audioUnit?.supportsUserPresets ?? false
-    }
-
-    // MARK: View Configuration
-
     var preferredWidth: CGFloat {
-        return viewConfigurations[currentViewConfigurationIndex].width
+        viewConfigurations[currentViewConfigurationIndex].width
     }
 
-    private var currentViewConfigurationIndex = 1
+    private var currentViewConfigurationIndex = 0
 
-    /// View configurations supported by the host app
     private var viewConfigurations: [AUAudioUnitViewConfiguration] = {
         let compact = AUAudioUnitViewConfiguration(width: 400, height: 100, hostHasController: false)
         let expanded = AUAudioUnitViewConfiguration(width: 800, height: 500, hostHasController: false)
@@ -243,19 +226,9 @@ class AudioUnitManager {
         return supportedConfigurations.count > 1
     }
 
-    /// Determines if the selected AU provides provides user interface.
     var providesUserInterface: Bool {
-        return audioUnit?.providesUserInterface ?? false
+        audioUnit?.providesUserInterface ?? false
     }
-
-    /// Toggles the current view mode (compact or expanded)
-    func toggleViewMode() {
-        guard let audioUnit = audioUnit else { return }
-        currentViewConfigurationIndex = currentViewConfigurationIndex == 0 ? 1 : 0
-        audioUnit.select(viewConfigurations[currentViewConfigurationIndex])
-    }
-
-    // MARK: Load Audio Units
 
     func loadAudioUnits(ofType type: AudioUnitType, completion: @escaping ([Component]) -> Void) {
 
@@ -264,16 +237,13 @@ class AudioUnitManager {
 
         // Locating components is a blocking operation. Perform this work on a separate queue.
         DispatchQueue.global(qos: .default).async {
-
             let componentType = type == .effect ? kAudioUnitType_Effect : kAudioUnitType_MusicDevice
-
-             // Make a component description matching any Audio Unit of the selected component type.
             let description = AudioComponentDescription(componentType: componentType,
                                                         componentSubType: 0,
                                                         componentManufacturer: 0,
                                                         componentFlags: 0,
                                                         componentFlagsMask: 0)
-
+            // リストアップ
             let components = AVAudioUnitComponentManager.shared().components(matching: description)
 
             // Filter out components that don't make sense for this demo.

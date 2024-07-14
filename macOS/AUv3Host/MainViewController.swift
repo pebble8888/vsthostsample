@@ -8,41 +8,12 @@ The view controller presenting the main view.
 import Cocoa
 
 protocol Coordinator: AnyObject {
-    
-    // User Preset Management
-    func didSelectPreset(_ preset: Preset)
-    func saveUserPreset(_ preset: Preset)
-    func deleteUserPreset(_ preset: Preset)
-
     // Audio Unit component selection
     func didSelectComponent(at index: Int)
     func didChangeAudioUnitType(to type: AudioUnitType)
 }
 
 extension MainViewController: Coordinator {
-    
-    func didSelectPreset(_ preset: Preset) {
-        audioUnitManager.currentPreset = preset
-    }
-    
-    func saveUserPreset(_ preset: Preset) {
-        do {
-            try audioUnitManager.savePreset(preset)
-        } catch {
-            print(error.localizedDescription)
-            showError(with: "Unable to save preset.")
-        }
-    }
-    
-    func deleteUserPreset(_ preset: Preset) {
-        do {
-            try audioUnitManager.deletePreset(preset)
-        } catch {
-            print(error.localizedDescription)
-            showError(with: "Unable to delete preset.")
-        }
-    }
-
     func showError(with message: String) {
         NSAlert.showError(with: message)
     }
@@ -107,11 +78,6 @@ class MainViewController: NSSplitViewController {
         audioUnitManager.togglePlayback()
     }
 
-    @IBAction func toggleView(_ sender: NSButton) {
-        audioUnitManager.toggleViewMode()
-        componentViewController.view.layoutSubtreeIfNeeded()
-    }
-
     func toggleAudioUnits() {
         guard let item = splitViewItem(for: listViewController) else { return }
         toggle(item: item)
@@ -160,13 +126,6 @@ class MainViewController: NSSplitViewController {
             audioUnitManager.instantiationType = .inProcess
         }
     }
-
-    /*
-    func loadPresets() {
-        presetsViewController.factoryPresets = audioUnitManager.factoryPresets
-        presetsViewController.userPresets = audioUnitManager.userPresets
-    }
-     */
 
     func loadViewController() {
         audioUnitManager.loadAudioUnitViewController() { viewController in
