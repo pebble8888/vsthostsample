@@ -5,13 +5,8 @@ Abstract:
 Small extensions to simplify view handling in the demo app.
 */
 
-#if os(iOS)
-import UIKit
-typealias View = UIView
-#elseif os(macOS)
 import AppKit
 typealias View = NSView
-#endif
 
 public extension View {
     func pinToSuperview() {

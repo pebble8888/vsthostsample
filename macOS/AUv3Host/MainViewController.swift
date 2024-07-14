@@ -57,8 +57,6 @@ extension MainViewController: Coordinator {
             switch result {
             case .success:
                 self.loadViewController()
-                // self.loadPresets()
-                // self.presetsViewController.supportsUserPresets = self.audioUnitManager.supportsUserPresets
                 self.hideToggleViewButton = !self.audioUnitManager.providesAlterativeViews
                 
             case .failure(let error):
@@ -90,11 +88,6 @@ class MainViewController: NSSplitViewController {
                     listViewController.coordinator = self
                 case let viewController as ComponentViewController:
                     componentViewController = viewController
-                    /*
-                case let viewController as PresetsViewController:
-                    presetsViewController = viewController
-                    presetsViewController.coordinator = self
-                     */
                 default:
                     fatalError("Unsupported view controller type found")
                 }
@@ -106,10 +99,6 @@ class MainViewController: NSSplitViewController {
         switch sender.selectedSegment {
         case 0:
             toggleAudioUnits()
-            /*
-        case 1:
-            togglePresets()
-             */
         default:
             print("Unknown segment selected: \(sender.selectedSegment)")
         }
@@ -129,16 +118,8 @@ class MainViewController: NSSplitViewController {
         toggle(item: item)
     }
     
-    /*
-    func togglePresets() {
-        guard let item = splitViewItem(for: presetsViewController) else { return }
-        toggle(item: item)
-    }
-     */
-    
     func toggle(item: NSSplitViewItem) {
         item.animator().isCollapsed = !item.isCollapsed
-        //splitView.layoutSubtreeIfNeeded()
     }
     
     override func viewDidLoad() {

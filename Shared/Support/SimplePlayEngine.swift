@@ -69,18 +69,6 @@ public class SimplePlayEngine {
         }
     }
     
-    private func setSessionActive(_ active: Bool) {
-        #if os(iOS)
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default)
-            try session.setActive(active)
-        } catch {
-            fatalError("Could not set Audio Session active \(active). error: \(error).")
-        }
-        #endif
-    }
-
     // MARK: Playback State
     
     public func startPlaying() {
@@ -106,7 +94,6 @@ public class SimplePlayEngine {
     
     private func startPlayingInternal() {
         // assumptions: we are protected by stateChangeQueue. we are not playing.
-        setSessionActive(true)
         
         if isEffect {
             // Schedule buffers on the player.
@@ -144,7 +131,6 @@ public class SimplePlayEngine {
         }
         engine.stop()
         isPlaying = false
-        setSessionActive(false)
     }
     
     private func scheduleEffectLoop() {
