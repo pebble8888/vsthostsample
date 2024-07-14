@@ -77,7 +77,6 @@ class MainViewController: NSSplitViewController {
 
     unowned var listViewController: ListViewController!
     unowned var componentViewController: ComponentViewController!
-    // unowned var presetsViewController: PresetsViewController!
 
     override var splitViewItems: [NSSplitViewItem] {
         didSet {
