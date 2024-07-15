@@ -62,7 +62,6 @@
 #include <cstdio>
 #include <iostream>
 
-//------------------------------------------------------------------------
 namespace Steinberg {
 namespace Vst {
 namespace {
@@ -72,13 +71,11 @@ constexpr auto VALIDATOR_INFO = kVstVersionString
     " Plug-in Validator\n"
     "Program by Steinberg (Built on " __DATE__ ")\n";
 
-//------------------------------------------------------------------------
 bool filterClassCategory (FIDString category, FIDString classCategory)
 {
 	return strcmp (category, classCategory) == 0;
 }
 
-//------------------------------------------------------------------------
 void printAllInstalledPlugins (std::ostream* os)
 {
 	if (!os)
@@ -99,38 +96,6 @@ void printAllInstalledPlugins (std::ostream* os)
 	}
 }
 
-/*
-void printAllSnapshots (std::ostream* os)
-{
-	if (!os)
-		return;
-	*os << "Searching installed Plug-ins...\n";
-	auto paths = VST3::Hosting::Module::getModulePaths ();
-	if (paths.empty ())
-	{
-		*os << "No Plug-ins found.\n";
-		return;
-	}
-	for (const auto& path : paths)
-	{
-		auto snapshots = VST3::Hosting::Module::getSnapshots (path);
-		if (snapshots.empty ())
-		{
-			*os << "No snapshots in " << path << "\n";
-			continue;
-		}
-		for (auto& snapshot : snapshots)
-		{
-			for (auto& desc : snapshot.images)
-			{
-				*os << "Snapshot : " << desc.path << "[" << desc.scaleFactor << "x]\n";
-			}
-		}
-	}
-}
- */
-
-//------------------------------------------------------------------------
 void printFactoryInfo (const VST3::Hosting::PluginFactory& factory, std::ostream* os)
 {
 	if (os)
@@ -158,85 +123,6 @@ void printFactoryInfo (const VST3::Hosting::PluginFactory& factory, std::ostream
 	}
 }
 
-//------------------------------------------------------------------------
-void checkModuleSnapshots (const VST3::Hosting::Module::Ptr& module, std::ostream* infoStream)
-{
-	if (infoStream)
-		*infoStream << "* Checking snapshots...\n\n";
-
-	auto snapshots = VST3::Hosting::Module::getSnapshots (module->getPath ());
-	if (snapshots.empty ())
-	{
-		if (infoStream)
-			*infoStream << "Info: No snapshots in Bundle.\n\n";
-	}
-	else
-	{
-		for (auto& classInfo : module->getFactory ().classInfos ())
-		{
-			if (!filterClassCategory (kVstAudioEffectClass, classInfo.category ().data ()))
-				continue;
-			bool found = false;
-			for (auto& snapshot : snapshots)
-			{
-				if (snapshot.uid == classInfo.ID ())
-				{
-					found = true;
-					if (infoStream)
-					{
-						*infoStream << "Found snapshots for '" << classInfo.name () << "'\n";
-						for (auto& image : snapshot.images)
-							*infoStream << " - " << image.path << " [" << image.scaleFactor
-							            << "x]\n";
-						*infoStream << "\n";
-					}
-					break;
-				}
-			}
-			if (!found)
-			{
-				if (infoStream)
-				{
-					*infoStream << "Info: No snapshot for '" << classInfo.name ()
-					            << "' in Bundle.\n\n";
-				}
-			}
-		}
-	}
-}
-
-#if SMTG_OS_LINUX
-//------------------------------------------------------------------------
-struct DummyRunLoop : U::ImplementsNonDestroyable<U::Directly<Steinberg::Linux::IRunLoop>>
-{
-	using IEventHandler = Steinberg::Linux::IEventHandler;
-	using ITimerHandler = Steinberg::Linux::ITimerHandler;
-	using FileDescriptor = Steinberg::Linux::FileDescriptor;
-	using TimerInterval = Steinberg::Linux::TimerInterval;
-
-	static Steinberg::Linux::IRunLoop& instance ()
-	{
-		static DummyRunLoop drl;
-		return drl;
-	}
-	tresult PLUGIN_API registerEventHandler (IEventHandler* handler, FileDescriptor fd) override
-	{
-		return kNotImplemented;
-	}
-	tresult PLUGIN_API unregisterEventHandler (IEventHandler* handler) override
-	{
-		return kNotImplemented;
-	}
-	tresult PLUGIN_API registerTimer (ITimerHandler* handler, TimerInterval milliseconds) override
-	{
-		return kNotImplemented;
-	}
-	tresult PLUGIN_API unregisterTimer (ITimerHandler* handler) override { return kNotImplemented; }
-};
-
-#endif
-
-//------------------------------------------------------------------------
 //-- Options
 constexpr auto optHelp = "help";
 constexpr auto optVersion = "version";
@@ -250,12 +136,9 @@ constexpr auto optListPlugInSnapshots = "snapshots";
 constexpr auto optCID = "cid";
 constexpr auto optSelftest = "selftest";
 
-//------------------------------------------------------------------------
 } // anonymous
 
-//------------------------------------------------------------------------
 // Validator
-//------------------------------------------------------------------------
 Validator::Validator (int argc, char* argv[]) : argc (argc), argv (argv)
 {
 	infoStream = &std::cout;
@@ -268,12 +151,10 @@ Validator::Validator (int argc, char* argv[]) : argc (argc), argv (argv)
 	TestingPluginContext::set (this->unknownCast ());
 }
 
-//------------------------------------------------------------------------
 Validator::~Validator ()
 {
 }
 
-//-----------------------------------------------------------------------------
 tresult PLUGIN_API Validator::queryInterface (const char* _iid, void** obj)
 {
 	QUERY_INTERFACE (_iid, obj, IHostApplication::iid, IHostApplication)
@@ -285,7 +166,6 @@ tresult PLUGIN_API Validator::queryInterface (const char* _iid, void** obj)
 	return FObject::queryInterface (_iid, obj);
 }
 
-//------------------------------------------------------------------------
 void PLUGIN_API Validator::addErrorMessage (const tchar* msg)
 {
 	if (errorStream)
@@ -298,7 +178,6 @@ void PLUGIN_API Validator::addErrorMessage (const tchar* msg)
 	}
 }
 
-//------------------------------------------------------------------------
 void PLUGIN_API Validator::addMessage (const tchar* msg)
 {
 	if (infoStream)
@@ -311,14 +190,12 @@ void PLUGIN_API Validator::addMessage (const tchar* msg)
 	}
 }
 
-//------------------------------------------------------------------------
 tresult PLUGIN_API Validator::getName (String128 name)
 {
 	VST3::StringConvert::convert ("vstvalidator", name, 127);
 	return kResultTrue;
 }
 
-//------------------------------------------------------------------------
 tresult PLUGIN_API Validator::createInstance (TUID cid, TUID iid, void** obj)
 {
 	FUID classID = FUID::fromTUID (cid);
@@ -341,7 +218,6 @@ tresult PLUGIN_API Validator::createInstance (TUID cid, TUID iid, void** obj)
 	return kResultFalse;
 }
 
-//------------------------------------------------------------------------
 int Validator::run ()
 {
 	// defaults
@@ -385,7 +261,6 @@ int Validator::run ()
 	}
 	else if (valueMap.count (optListPlugInSnapshots))
 	{
-		// printAllSnapshots (infoStream);
 		return 0;
 	}
 	else if (valueMap.count (optSelftest))
@@ -428,18 +303,11 @@ int Validator::run ()
 		customTestComponentPath = valueMap[optTestComponentPath];
 
 	auto globalFailure = false;
-	for (auto& path : files)
-	{
-
-#if SMTG_OS_WINDOWS
-// TODO: Impl
-#else
+	for (auto& path : files) {
 		// if path is not absolute, create one
-		if (path[0] != '/')
-		{
+		if (path[0] != '/') {
 			auto realPath = realpath (path.data (), NULL);
-			if (realPath)
-			{
+			if (realPath) {
 				path.assign (realPath);
 				free (realPath);
 			}
@@ -453,14 +321,13 @@ int Validator::run ()
 				free (realPath);
 			}
 		}
-#endif
 
-		//---load VST module-----------------
+		// load VST module
 		if (infoStream)
 			*infoStream << "* Loading module...\n\n\t" << path << "\n\n";
 
 		std::string error;
-		auto module = Module::create (path, error);
+		auto module = Module::create(path, error);
 		if (!module)
 		{
 			*errorStream << "Invalid Module!\n";
@@ -468,20 +335,22 @@ int Validator::run ()
 				*errorStream << error << "\n";
 			return -1;
 		}
-#if SMTG_OS_LINUX
-		module->getFactory ().setHostContext (&DummyRunLoop::instance ());
-#endif
+
+        *errorStream << "module created.\n";
+
 		testModule (module, {useGlobalInstance, useExtensiveTests, customTestComponentPath,
 		                     testSuiteName, std::move (testProcessor)});
 
-		if (numTestsFailed > 0)
+		if (numTestsFailed > 0) {
 			globalFailure = true;
+        }
+        
+        // ここでunload
 	}
 
 	return globalFailure ? -1 : 0;
 }
 
-//------------------------------------------------------------------------
 void Validator::testModule (Module::Ptr module, const ModuleTestConfig& config)
 {
 	using TestFactoryMap = std::map<std::string, IPtr<ITestFactory>>;
@@ -492,16 +361,13 @@ void Validator::testModule (Module::Ptr module, const ModuleTestConfig& config)
 	auto factory = module->getFactory ();
 	printFactoryInfo (module->getFactory (), infoStream);
 
-	//---check for snapshots-----------------
-	checkModuleSnapshots (module, infoStream);
-
 	Module::Ptr testModule;
 	PlugProviderVector plugProviders;
 	TestFactoryMap testFactories;
 	IPtr<IPluginCompatibility> plugCompatibility;
 	auto testSuite = owned (new TestSuite ("Tests"));
 
-	//---create tests---------------
+	// create tests
 	if (infoStream)
 		*infoStream << "* Creating tests...\n\n";
 	for (auto& classInfo : factory.classInfos ())
@@ -593,7 +459,7 @@ void Validator::testModule (Module::Ptr module, const ModuleTestConfig& config)
 	}
 	testFactories.clear ();
 
-	//---run tests---------------------------
+	// run tests
 	if (infoStream)
 		*infoStream << "* Running tests...\n\n";
 
@@ -615,10 +481,8 @@ void Validator::testModule (Module::Ptr module, const ModuleTestConfig& config)
 	}
 }
 
-//------------------------------------------------------------------------
 namespace { // anonymous
 
-//------------------------------------------------------------------------
 template <typename T, typename... Args>
 void createTest (ITestSuite* parent, ITestPlugProvider* plugProvider, Args&&... arguments)
 {
@@ -626,7 +490,6 @@ void createTest (ITestSuite* parent, ITestPlugProvider* plugProvider, Args&&... 
 	parent->addTest (test->getName (), test);
 }
 
-//------------------------------------------------------------------------
 void createSpeakerArrangementTest (ITestSuite* parent, ITestPlugProvider* plugProvider,
                                    SymbolicSampleSizes sampleSize, SpeakerArrangement inSpArr,
                                    SpeakerArrangement outSpArr)
@@ -634,7 +497,6 @@ void createSpeakerArrangementTest (ITestSuite* parent, ITestPlugProvider* plugPr
 	createTest<SpeakerArrangementTest> (parent, plugProvider, sampleSize, inSpArr, outSpArr);
 }
 
-//------------------------------------------------------------------------
 void createPrecisionTests (ITestSuite* parent, ITestPlugProvider* plugProvider,
                            SymbolicSampleSizes sampleSize, bool extensive)
 {
@@ -689,10 +551,8 @@ void createPrecisionTests (ITestSuite* parent, ITestPlugProvider* plugProvider,
 	}
 }
 
-//------------------------------------------------------------------------
 } // anonymous
 
-//------------------------------------------------------------------------
 IPtr<TestSuite> Validator::createTests (ITestPlugProvider* plugProvider,
                                         const ConstString& plugName, bool extensive)
 {
@@ -742,14 +602,12 @@ IPtr<TestSuite> Validator::createTests (ITestPlugProvider* plugProvider,
 	return plugTestSuite;
 }
 
-//------------------------------------------------------------------------
 void Validator::addTest (ITestSuite* _testSuite, TestBase* testItem)
 {
 	_testSuite->addTest (testItem->getName (), testItem);
 	testItem->release ();
 }
 
-//------------------------------------------------------------------------
 void Validator::runTestSuite (TestSuite* suite, FIDString nameFilter)
 {
 	std::string name;
@@ -840,5 +698,8 @@ void Validator::runTestSuite (TestSuite* suite, FIDString nameFilter)
 		}
 	}
 }
+
 }
+
 } // namespaces
+

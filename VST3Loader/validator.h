@@ -56,25 +56,20 @@ class VstModule;
 class TestBase;
 class TestSuite;
 
-//------------------------------------------------------------------------
 /** Main Class of Validator.
 \ingroup Validator */
-//------------------------------------------------------------------------
 class Validator : public FObject, public ITestResult, public IHostApplication
 {
 public:
-//------------------------------------------------------------------------
 	Validator (int argc, char* argv[]);
 	~Validator () override;
 
 	int run ();
 
-//------------------------------------------------------------------------
 	OBJ_METHODS (Validator, FObject)
 	REFCOUNT_METHODS (FObject)
 
 	tresult PLUGIN_API queryInterface (const char* _iid, void** obj) override;
-//------------------------------------------------------------------------
 protected:
 	using Module = VST3::Hosting::Module;
 

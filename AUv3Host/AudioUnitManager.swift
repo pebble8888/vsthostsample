@@ -8,66 +8,25 @@ The manager object used to find and instantiate audio units and manage their pre
 import Foundation
 import CoreAudioKit
 import AVFoundation
-
-#if os(iOS)
-import UIKit
-public typealias ViewController = UIViewController
-#elseif os(macOS)
 import AppKit
-public typealias ViewController = NSViewController
-#endif
 
-// An enum used to prevent exposing the Core Audio component description's componentType to the UI layer.
+public typealias ViewController = NSViewController
+
 enum AudioUnitType: Int {
     case effect
     case instrument
 }
 
-// An enum used to prevent exposing the Core Audio AudioComponentInstantiationOptions to the UI layer.
 enum InstantiationType: Int {
     case inProcess
     case outOfProcess
-}
-
-enum PresetType: Int {
-    case factory
-    case user
-}
-
-enum UserPresetsChangeType: Int {
-    case save
-    case delete
-    case external
-    case undefined
-}
-
-struct UserPresetsChange {
-    let type: UserPresetsChangeType
-    let userPresets: [Preset]
 }
 
 extension Notification.Name {
     static let userPresetsChanged = Notification.Name("userPresetsChanged")
 }
 
-// A simple wrapper type to prevent exposing the Core Audio AUAudioUnitPreset in the UI layer.
-public struct Preset {
-    init(name: String) {
-        let preset = AUAudioUnitPreset()
-        preset.name = name
-        preset.number = -1
-        self.init(preset: preset)
-    }
-    fileprivate init(preset: AUAudioUnitPreset) {
-        audioUnitPreset = preset
-    }
-    fileprivate let audioUnitPreset: AUAudioUnitPreset
-    public var number: Int { return audioUnitPreset.number }
-    public var name: String { return audioUnitPreset.name }
-}
-
 public struct Component {
-
     private let audioUnitType: AudioUnitType
     fileprivate let avAudioUnitComponent: AVAudioUnitComponent?
 
@@ -84,18 +43,11 @@ public struct Component {
     }
 
     public var hasCustomView: Bool {
-        #if os(macOS)
-        return avAudioUnitComponent?.hasCustomView ?? false
-        #else
-        return false
-        #endif
+        avAudioUnitComponent?.hasCustomView ?? false
     }
 }
 
-// Manages the interaction with the AudioToolbox and AVFoundation frameworks.
 class AudioUnitManager {
-
-    // Filter out these AUs. They don't make sense for this demo.
     var filterClosure: (AVAudioUnitComponent) -> Bool = {
         let filterlist = ["AUNewPitch", "AURoundTripAAC", "AUNetSend"]
         var allowed = !filterlist.contains($0.name)
@@ -106,26 +58,18 @@ class AudioUnitManager {
     }
     
     var observer: NSKeyValueObservation?
-    // var userPresetChangeType: UserPresetsChangeType = .undefined
 
-    /// The user-selected audio unit.
     private var audioUnit: AUAudioUnit? {
         didSet {
-            // A new audio unit was selected. Reset our internal state.
             observer = nil
-            // If the selected audio unit doesn't support user presets, return.
-            guard audioUnit?.supportsUserPresets ?? false else { return }
         }
     }
 
-    /// The serial dispatch queue used to control access to the AVAudioUnitComponent array.
     private let componentsAccessQueue = DispatchQueue(label: "com.example.apple-samplecode.ComponentsAccessQueue")
 
     private var _components = [Component]()
 
-    /// The loaded AVAudioUnitComponent objects.
     private var components: [Component] {
-        // This property can be accessed by multiple threads. Synchronize reads/writes.
         get {
             var array = [Component]()
             componentsAccessQueue.sync {
@@ -143,9 +87,6 @@ class AudioUnitManager {
     /// The playback engine used to play audio.
     private let playEngine = SimplePlayEngine()
 
-    #if targetEnvironment(macCatalyst)
-    private let options = AudioComponentInstantiationOptions.loadOutOfProcess
-    #else
     private var options = AudioComponentInstantiationOptions.loadOutOfProcess
 
     /// Determines how the audio unit is instantiated.
@@ -155,35 +96,7 @@ class AudioUnitManager {
             options = instantiationType == .inProcess ? .loadInProcess : .loadOutOfProcess
         }
     }
-    #endif
 
-    // MARK: Preset Management
-
-    /// Gets the audio unit's factory presets.
-    public var factoryPresets: [Preset] {
-        guard let presets = audioUnit?.factoryPresets else { return [] }
-        return presets.map { Preset(preset: $0) }
-    }
-
-    /// Get or set the audio unit's current preset.
-    public var currentPreset: Preset? {
-        get {
-            guard let preset = audioUnit?.currentPreset else { return nil }
-            return Preset(preset: preset)
-        }
-        set {
-            audioUnit?.currentPreset = newValue?.audioUnitPreset
-        }
-    }
-    
-    // MARK: User Presets
-    
-    /// Gets the audio unit's user presets.
-    public var userPresets: [Preset] {
-        guard let presets = audioUnit?.userPresets else { return [] }
-        return presets.map { Preset(preset: $0) }.reversed()
-    }
-    
     var preferredWidth: CGFloat {
         viewConfigurations[currentViewConfigurationIndex].width
     }
@@ -200,10 +113,8 @@ class AudioUnitManager {
     }
 
     func loadAudioUnits(ofType type: AudioUnitType, completion: @escaping ([Component]) -> Void) {
-        // Reset the engine to remove any configured audio units.
         playEngine.reset()
 
-        // Locating components is a blocking operation. Perform this work on a separate queue.
         DispatchQueue.global(qos: .default).async {
             let componentType = type == .effect ? kAudioUnitType_Effect : kAudioUnitType_MusicDevice
             let description = AudioComponentDescription(componentType: componentType,
@@ -214,15 +125,15 @@ class AudioUnitManager {
             // リストアップ
             let components = AVAudioUnitComponentManager.shared().components(matching: description)
 
-            // Filter out components that don't make sense for this demo.
-            // Map AVAudioUnitComponent to array of Component (view model) objects.
             var wrapped = components.filter(self.filterClosure).map { Component($0, type: type) }
 
             // Insert a "No Effect" element into array if effect
             if type == .effect {
                 wrapped.insert(Component(nil, type: type), at: 0)
             }
+            
             self.components = wrapped
+            
             // Notify the caller of the loaded components.
             DispatchQueue.main.async {
                 completion(wrapped)
@@ -246,7 +157,6 @@ class AudioUnitManager {
             return
         }
 
-        // Get the component description
         let description = component.audioComponentDescription
 
         // Instantiate the audio unit and connect it the the play engine.

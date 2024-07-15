@@ -61,31 +61,61 @@ template <typename T>
 class CFPtr
 {
 public:
-	inline CFPtr (const T& obj = nullptr) : obj (obj) {}
-	inline CFPtr (CFPtr&& other) { *this = other; }
-	inline ~CFPtr ()
+	inline CFPtr (const T& obj = nullptr)
+    : obj (obj)
+    {}
+    
+    // move contructor
+    inline CFPtr (CFPtr&& other) {
+        *this = other;
+    }
+    
+    // destructor
+    inline ~CFPtr ()
 	{
-		if (obj)
-			CFRelease (obj);
+        if (obj) {
+            CFRelease (obj);
+        }
+        
+        obj = nullptr;
 	}
+    
+    void clear() {
+        if (obj) {
+            const auto refCount = CFGetRetainCount(obj);
+            printf("refCount %d\n", refCount);
+            CFRelease(obj);
+        }
+        
+        obj = nullptr;
+    }
 
-	inline CFPtr& operator= (CFPtr&& other)
+    // move operator
+    inline CFPtr& operator=(CFPtr&& other)
 	{
 		obj = other.obj;
 		other.obj = nullptr;
 		return *this;
 	}
-	inline CFPtr& operator= (const T& o)
+    
+    // 生成した値を代入する
+    inline CFPtr& operator=(const T& o)
 	{
-		if (obj)
-			CFRelease (obj);
-		obj = o;
+        if (obj) {
+            CFRelease (obj);
+        }
+        
+        obj = o;
 		return *this;
 	}
-	inline operator T () const { return obj; } // act as T
+    
+    inline operator T () const { return obj; } // act as T
+    
 private:
-	CFPtr (const CFPtr& other) = delete;
-	CFPtr& operator= (const CFPtr& other) = delete;
+    // copy constructor
+    CFPtr (const CFPtr& other) = delete;
+    // copy operator
+    CFPtr& operator= (const CFPtr& other) = delete;
 
 	T obj = nullptr;
 };
@@ -95,30 +125,37 @@ class MacModule : public Module
 {
 public:
 	template <typename T>
-	T getFunctionPointer (const char* name)
-	{
+	T getFunctionPointer (const char* name) {
 		assert (bundle);
 		CFPtr<CFStringRef> functionName (
 		    CFStringCreateWithCString (kCFAllocatorDefault, name, kCFStringEncodingASCII));
 		return reinterpret_cast<T> (CFBundleGetFunctionPointerForName (bundle, functionName));
 	}
 
-	bool loadInternal (const std::string& path, std::string& errorDescription)
-	{
+	bool loadInternal (const std::string& path, std::string& errorDescription) {
 		CFPtr<CFURLRef> url (CFURLCreateFromFileSystemRepresentation (
 		    kCFAllocatorDefault, reinterpret_cast<const UInt8*> (path.data ()), path.length (),
 		    true));
 		if (!url)
 			return false;
+
+        // 1)
 		bundle = CFBundleCreate (kCFAllocatorDefault, url);
 		CFErrorRef error = nullptr;
-		if (!bundle || !CFBundleLoadExecutableAndReturnError (bundle, &error))
-		{
-			if (error)
-			{
+        const auto refCount1 = CFGetRetainCount(bundle);
+        printf("refCount1 %d\n", refCount1);
+        BOOL loadResult = FALSE;
+        if (bundle) {
+            loadResult = CFBundleLoadExecutableAndReturnError (bundle, &error);
+            const auto refCount2 = CFGetRetainCount(bundle);
+            printf("refCount2 %d\n", refCount2);
+        }
+        
+        if (!bundle ||
+            !loadResult) {
+			if (error) {
 				CFPtr<CFStringRef> errorString (CFErrorCopyDescription (error));
-				if (errorString)
-				{
+				if (errorString) {
 					auto stringLength = CFStringGetLength (errorString);
 					auto maxSize =
 					    CFStringGetMaximumSizeForEncoding (stringLength, kCFStringEncodingUTF8);
@@ -128,44 +165,42 @@ public:
 						errorDescription = buffer.get ();
 					CFRelease (error);
 				}
-			}
-			else
-			{
+			} else {
 				errorDescription = "Could not create Bundle for path: " + path;
 			}
 			return false;
 		}
+
 		// bundleEntry is mandatory
 		auto bundleEntry = getFunctionPointer<BundleEntryFunc> ("bundleEntry");
-		if (!bundleEntry)
-		{
+		if (!bundleEntry) {
 			errorDescription = "Bundle does not export the required 'bundleEntry' function";
 			return false;
 		}
+
 		// bundleExit is mandatory
 		auto bundleExit = getFunctionPointer<BundleExitFunc> ("bundleExit");
-		if (!bundleExit)
-		{
+		if (!bundleExit) {
 			errorDescription = "Bundle does not export the required 'bundleExit' function";
 			return false;
 		}
+
 		auto factoryProc = getFunctionPointer<GetFactoryProc> ("GetPluginFactory");
-		if (!factoryProc)
-		{
+		if (!factoryProc) {
 			errorDescription = "Bundle does not export the required 'GetPluginFactory' function";
 			return false;
 		}
-		if (!bundleEntry (bundle))
-		{
+
+		if (!bundleEntry (bundle)) {
 			errorDescription = "Calling 'bundleEntry' failed";
 			return false;
 		}
 		auto f = owned (factoryProc ());
-		if (!f)
-		{
+		if (!f) {
 			errorDescription = "Calling 'GetPluginFactory' returned nullptr";
 			return false;
 		}
+
 		factory = PluginFactory (f);
 		return true;
 	}
@@ -191,14 +226,15 @@ public:
 		return loadInternal (path, errorDescription);
 	}
 
-	~MacModule () override
-	{
+	~MacModule () override {
 		factory = PluginFactory (nullptr);
 
-		if (bundle)
-		{
+		if (bundle) {
 			if (auto bundleExit = getFunctionPointer<BundleExitFunc> ("bundleExit"))
 				bundleExit ();
+            CFBundleUnloadExecutable(bundle);
+            CFRelease(bundle);
+            bundle.clear();
 		}
 	}
 

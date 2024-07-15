@@ -36,13 +36,13 @@
 
 #include "validator.h"
 #include "public.sdk/source/vst/utility/stringconvert.h"
+#include "main.h"
 
 void* moduleHandle = nullptr;
 extern bool InitModule ();
 extern bool DeinitModule ();
 
-//------------------------------------------------------------------------
-int run (int argc, char* argv[])
+int run(int argc, char* argv[])
 {
 	InitModule ();
 
@@ -51,6 +51,14 @@ int run (int argc, char* argv[])
 	DeinitModule ();
 
 	return result;
+}
+
+int testVST3(void)
+{
+    char* argv0 = (char *)"";
+    char* argv1 = (char *)"/Users/pebble8888/Library/Audio/Plug-Ins/VST3/again.vst3";
+    char* argv[2] = {argv0, argv1};
+    return run(2, argv);
 }
 
 /*

@@ -67,6 +67,7 @@ class MainViewController: NSSplitViewController {
     
     @IBAction func loadVST3(_ sender: NSButton) {
         NSLog("loadVST3")
+        testVST3()
     }
     
     @IBAction func unloadVST3(_ sender: NSButton) {
